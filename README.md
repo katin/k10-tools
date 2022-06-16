@@ -1,4 +1,4 @@
-#### k10-tools
+# k10-tools
 
 *A command line toolkit for pentesting.*
 
@@ -10,6 +10,6 @@ your favorite tools.
 Also includes history and results tracking; attack vector status, tracking, and notes; and
 custom crib sheets for quick copy-paste and reference information.
 
-##NOTES
+## NOTES
 * currently built to test againt ONE SINGLE ip address at a time
 
