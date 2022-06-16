@@ -1,0 +1,3 @@
+#!/bin/bash
+sed -i "s]K10TESTDIR=.*]K10TESTDIR=$PWD]g" ~/.k10.env
+echo "Current testing files directory set to $PWD"
