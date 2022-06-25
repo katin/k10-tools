@@ -3,20 +3,32 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"os/exec"
+	"bufio"
+	"bytes"
+	// "encoding/json"
+	"github.com/spf13/viper"
 )
 
+var Envars interface{}
+var K10_config_file string = ".k10.env"
+
+
 func main() {
+
+	LoadSettings()
+
 	fmt.Println(len(os.Args), os.Args)
 	if len(os.Args) == 1 {
 		JumpToTestDir()
 	}
 	cmd := os.Args[1]
 	//fmt.Println("Cmd equals", cmd)
-	k10tools := os.Getenv("K10TOOLS")
-	k10cmdsubdir := os.Getenv("K10SUBDIR")
+	k10tools := viper.GetString("K10TOOLS")
+	k10cmdsubdir := viper.GetString("K10SUBDIR")
 	fmt.Println("k10 tools location =",k10tools+k10cmdsubdir)
 	files, err := ioutil.ReadDir(k10tools+k10cmdsubdir+"/cmds")
 	if err != nil {
@@ -34,6 +46,32 @@ func main() {
 		}
 		//fmt.Println(f.Name())
 	}
+}
+
+func LoadSettings() {
+	viper.SetConfigName(K10_config_file) 	// name of config file (without extension)
+	viper.SetConfigType("env")					// config file type
+	viper.AddConfigPath("$HOME")   			// path to look for the config file in
+	// viper.AddConfigPath("$HOME/.appname")  // call multiple times to add many search paths
+	// viper.AddConfigPath(".")               // optionally look for config in the working directory
+
+	err := viper.ReadInConfig() 				// Find and read the config file
+	if err != nil {
+		panic(fmt.Errorf("fatal error config file: %w", err))
+	} else {
+		fmt.Println("Config file " + os.Getenv("HOME") + K10_config_file + " successfully loaded.")
+	}
+
+// Set undefined variables
+	// viper.SetDefault("database.dbname", "test_db")
+
+	return
+}
+
+var settings struct {
+    ServerMode bool `json:"serverMode"`
+    SourceDir  string `json:"sourceDir"`
+    TargetDir  string `json:"targetDir"`
 }
 
 func RunBash(scriptfn string) string {
