@@ -1,0 +1,9 @@
+{
+  "activities": [
+    {
+      "systime": ["cmd run","resultsFile","comment","vectorSrcID","vectorsCount"],
+      "0812645462": ["nmap -sC -sV -vv -oA nmap-quick 10.11.116.20","","TC00001","2"]
+    }  
+  ]
+}
+

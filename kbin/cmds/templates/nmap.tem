@@ -1,0 +1,37 @@
+{
+  "logOutput": false,
+  "preRunMsg": "Commencing nmap scan of $TARGETIP.",
+  "postRunMsg": "nmap scan of $TARGETIP completed.",
+  "cmds": [
+    {
+      "quick": "nmap -sC -sV -vv -oA nmap-quick $TARGETIP",
+      "full": "nmap -sC -sV -p- -vv -oA nmap-full $TARGETIP",
+      "udp": "nmap -sU -sV -vv -oA nmap-udp $TARGETIP",
+      "port": "nmap -sC -sV -p$2 -vv -oA nmap-port-$2 $TARGETIP"
+    }
+  ],
+  "varsRequired": [ "$TARGETIP", "$TESTSTATUS" ],
+  "varsDefault": [ 
+    {
+      "RUNBACKGROUND": false,
+      "$NOISELEVEL": 1, 
+      "$ASKFORCOMMENTS": false
+   ],
+  "resultFiles": [
+    {
+      "quick": "nmap-quick.xml",
+      "full": "nmap-full.xml",
+      "udp": "nmap-udp.xml",
+      "port": "nmap-port-$2"
+    }
+  ],
+  "resultFileScanners": ["scan-nmap-xml", "nmap.iov"],
+  "resultDataExtractors": [
+    {
+      "COLNAME": ["tool","params","match-string","storeDest"],
+      "PORTSOPEN": ["grep", "-iv -a8", "#####/open","ports.json"]
+      "EXPLOITDB": ["searchsploit","-n?","$PORTVERSIONS","vectors.json"]
+    }
+  ]
+}
+
