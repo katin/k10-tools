@@ -1,2 +1,6 @@
 #!/bin/bash
 touch $HOME/.k10.env
+
+# next, add all the required default settings into the file
+# ... TBD
+

@@ -3,12 +3,10 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"io"
+	// "io"
 	"log"
 	"os"
 	"os/exec"
-	"bufio"
-	"bytes"
 	// "encoding/json"
 	"github.com/spf13/viper"
 )
@@ -24,27 +22,35 @@ func main() {
 	fmt.Println(len(os.Args), os.Args)
 	if len(os.Args) == 1 {
 		JumpToTestDir()
+		os.Exit(0)
 	}
-	cmd := os.Args[1]
-	//fmt.Println("Cmd equals", cmd)
-	k10tools := viper.GetString("K10TOOLS")
-	k10cmdsubdir := viper.GetString("K10SUBDIR")
-	fmt.Println("k10 tools location =",k10tools+k10cmdsubdir)
-	files, err := ioutil.ReadDir(k10tools+k10cmdsubdir+"/cmds")
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, f := range files {
-		afile := fmt.Sprint(f.Name())
-		//fmt.Println("afile=", afile)
-		if afile[:4] == "k10." {
-			if afile[4:] == cmd {
-				fmt.Println("CMD FOUND:", cmd)
-				logtxt := RunBash(k10tools+k10cmdsubdir+"/cmds/" + afile)
-				fmt.Println("OUTPUT:", logtxt)
+	// cmd := os.Args[1]
+
+// check to see if it is an internal command
+	switch cmd := os.Args[1]; cmd {
+		case "context":
+			SetContext( os.Args[2:])
+		default:
+			//fmt.Println("Cmd equals", cmd)
+			k10tools := viper.GetString("K10TOOLS")
+			k10cmdsubdir := viper.GetString("K10SUBDIR")
+			fmt.Println("k10 tools location =",k10tools+k10cmdsubdir)
+			files, err := ioutil.ReadDir(k10tools+k10cmdsubdir+"/cmds")
+			if err != nil {
+				log.Fatal(err)
 			}
-		}
-		//fmt.Println(f.Name())
+			for _, f := range files {
+				afile := fmt.Sprint(f.Name())
+				//fmt.Println("afile=", afile)
+				if afile[:4] == "k10." {
+					if afile[4:] == cmd {
+						fmt.Println("CMD FOUND:", cmd)
+						logtxt := RunBash(k10tools+k10cmdsubdir+"/cmds/" + afile)
+						fmt.Println("OUTPUT:", logtxt)
+					}
+				}
+				//fmt.Println(f.Name())
+			}
 	}
 }
 
@@ -100,16 +106,26 @@ func LoadEnviron() {
 
 //
 func JumpToTestDir() {
-	k10tools := os.Getenv("K10TOOLS")
-	if len(k10tools) == 0 {
+	k10tools := viper.GetString("K10TOOLS")
+	fmt.Println("K10TOOLS="+k10tools)
+	if k10tools == "" {
 			fmt.Println("k10-tools not installed.")
 			fmt.Println("Run 'source ~.k10.env' at the command line to install.")
-			os.Exit(1)
+			os.Exit(0)
 	}
 	fmt.Println("k10-tools path is set to " + k10tools)
-	testdir := os.Getenv("K10TESTDIR")
+	testdir := viper.GetString("K10TESTDIR")
 	if len(testdir) > 0 {
+		fmt.Println("Changing user directory to " + testdir)
+		pathset := os.Getenv("PATH")
+		fmt.Println("Current PATH is " + pathse)t
 		result := RunBash("cd " + testdir)
 		fmt.Println(result)
 	}
+}
+
+func SetContext( parms []string ) int {
+	fmt.Println("in SetContext!")	
+
+	return(0)
 }

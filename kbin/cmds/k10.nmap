@@ -1,0 +1,29 @@
+#!/bin/bash
+#
+# k10.nmap - run various levels of nmap scan on the current test target
+# 
+# k10 nmap [quick|full|udp|port] [port#]
+
+#echo $TARGETIP
+
+case $1 in
+	quick)
+		MYCMD="nmap -sC -sV -vv -oA nmap-quick $TARGETIP"
+		;;
+	full)
+		MYCMD="nmap -sC -sV -p- -vv -oA nmap-full $TARGETIP"
+		;;
+	udp)
+		MYCMD="nmap -sU -sV -vv -oA nmap-udp $TARGETIP"
+		;;
+	port)
+		MYCMD="nmap -sC -sV -p$2 -vv -oA nmap-port-$2 $TARGETIP"
+		;;
+esac
+
+echo "MyCmd is "$MYCMD
+echo "Parms passed are: "$@
+
+set -x
+$MYCMD
+
